@@ -15,12 +15,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Scaffold(
-          appBar: AppBar(title: Text('Demo')),
-          body: MyHomePage(),
-        ),
+      home: Scaffold(
+        appBar: AppBar(title: Text('Demo')),
+        body: MyHomePage(),
       ),
     );
   }
@@ -54,16 +51,30 @@ class _MyHomePageState extends State<MyHomePage> {
                 print(value);
               },
               selectorConfig: SelectorConfig(
-                selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+                selectorType: PhoneInputSelectorType.MODAL,
+                colorSelectorBox: Color(0xff101930),
+                colorLineInTopSelectorBox: Color(0xff707070),
               ),
               ignoreBlank: false,
-              autoValidateMode: AutovalidateMode.disabled,
+              autoValidateMode: AutovalidateMode.onUserInteraction,
               selectorTextStyle: TextStyle(color: Colors.black),
+              inputDecoration: InputDecoration(
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderSide: BorderSide(color: Colors.blue)),
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderSide: BorderSide(color: Colors.blue)),
+                filled: true,
+                contentPadding: EdgeInsets.only(bottom: 16.0, left: 16.0, right: 10.0),
+              ),
+              countryBoxDecoration: BoxDecoration(borderRadius: BorderRadius.circular(6), border: Border.all(color: Colors.black)),
               initialValue: number,
+              helperTextSearchBox: " NHap vo day",
+              locale: "vi",
               textFieldController: controller,
               formatInput: false,
-              keyboardType:
-                  TextInputType.numberWithOptions(signed: true, decimal: true),
+              keyboardType: TextInputType.numberWithOptions(signed: true, decimal: true),
               inputBorder: OutlineInputBorder(),
               onSaved: (PhoneNumber number) {
                 print('On Saved: $number');
@@ -94,8 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void getPhoneNumber(String phoneNumber) async {
-    PhoneNumber number =
-        await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber, 'US');
+    PhoneNumber number = await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber, 'US');
 
     setState(() {
       this.number = number;

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/src/models/country_model.dart';
 import 'package:intl_phone_number_input/src/utils/selector_config.dart';
@@ -18,6 +20,8 @@ class SelectorButton extends StatelessWidget {
   final bool isEnabled;
   final bool isScrollControlled;
 
+  final String? helperTextSearchBox;
+
   final ValueChanged<Country?> onCountryChanged;
 
   const SelectorButton({
@@ -31,7 +35,7 @@ class SelectorButton extends StatelessWidget {
     required this.locale,
     required this.onCountryChanged,
     required this.isEnabled,
-    required this.isScrollControlled,
+    required this.isScrollControlled,this.helperTextSearchBox,
   }) : super(key: key);
 
   @override
@@ -69,13 +73,12 @@ class SelectorButton extends StatelessWidget {
             onPressed: countries.isNotEmpty && countries.length > 1 && isEnabled
                 ? () async {
                     Country? selected;
-                    if (selectorConfig.selectorType ==
-                        PhoneInputSelectorType.BOTTOM_SHEET) {
-                      selected = await showCountrySelectorBottomSheet(
-                          context, countries);
+                    if (selectorConfig.selectorType == PhoneInputSelectorType.BOTTOM_SHEET) {
+                      selected = await showCountrySelectorBottomSheet(context, countries);
+                    } else if (selectorConfig.selectorType == PhoneInputSelectorType.MODAL) {
+                      selected = await showCountrySelectorModal(context, countries);
                     } else {
-                      selected =
-                          await showCountrySelectorDialog(context, countries);
+                      selected = await showCountrySelectorDialog(context, countries);
                     }
 
                     if (selected != null) {
@@ -98,8 +101,7 @@ class SelectorButton extends StatelessWidget {
   }
 
   /// Converts the list [countries] to `DropdownMenuItem`
-  List<DropdownMenuItem<Country>> mapCountryToDropdownItem(
-      List<Country> countries) {
+  List<DropdownMenuItem<Country>> mapCountryToDropdownItem(List<Country> countries) {
     return countries.map((country) {
       return DropdownMenuItem<Country>(
         value: country,
@@ -117,8 +119,7 @@ class SelectorButton extends StatelessWidget {
   }
 
   /// shows a Dialog with list [countries] if the [PhoneInputSelectorType.DIALOG] is selected
-  Future<Country?> showCountrySelectorDialog(
-      BuildContext inheritedContext, List<Country> countries) {
+  Future<Country?> showCountrySelectorDialog(BuildContext inheritedContext, List<Country> countries) {
     return showDialog(
       context: inheritedContext,
       barrierDismissible: true,
@@ -142,31 +143,27 @@ class SelectorButton extends StatelessWidget {
   }
 
   /// shows a Dialog with list [countries] if the [PhoneInputSelectorType.BOTTOM_SHEET] is selected
-  Future<Country?> showCountrySelectorBottomSheet(
-      BuildContext inheritedContext, List<Country> countries) {
+  Future<Country?> showCountrySelectorBottomSheet(BuildContext inheritedContext, List<Country> countries) {
     return showModalBottomSheet(
       context: inheritedContext,
       clipBehavior: Clip.hardEdge,
       isScrollControlled: isScrollControlled,
       backgroundColor: Colors.transparent,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12), topRight: Radius.circular(12))),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
       builder: (BuildContext context) {
         return Stack(children: [
           GestureDetector(
             onTap: () => Navigator.pop(context),
           ),
           Padding(
-            padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
             child: DraggableScrollableSheet(
               builder: (BuildContext context, ScrollController controller) {
                 return Directionality(
                   textDirection: Directionality.of(inheritedContext),
                   child: Container(
                     decoration: ShapeDecoration(
-                      color: Theme.of(context).canvasColor,
+                      color: selectorConfig.colorSelectorBox?? Theme.of(context).canvasColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(12),
@@ -191,5 +188,99 @@ class SelectorButton extends StatelessWidget {
         ]);
       },
     );
+  }
+
+  /// shows a Dialog with list [countries] if the [PhoneInputSelectorType.MODAL] is selected
+  Future<Country?> showCountrySelectorModal(BuildContext inheritedContext, List<Country> countries) {
+    return showModalBottomSheet(
+        isScrollControlled: isScrollControlled,
+        backgroundColor: Colors.transparent,
+        context: inheritedContext,
+        builder: (BuildContext context) {
+          return ClipRRect(
+              borderRadius: BorderRadius.only(topRight: Radius.circular(15), topLeft: Radius.circular(15)),
+              child: Container(
+                  height: MediaQuery.of(context).size.height * 0.9,
+                  color: Colors.transparent,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 85,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(topRight: Radius.circular(15), topLeft: Radius.circular(15)),
+                          color: selectorConfig.colorLineInTopSelectorBox?? Colors.transparent,
+                        ),
+                        margin: EdgeInsets.only(bottom: 6),
+                      ),
+                      Expanded(
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.only(topRight: Radius.circular(15), topLeft: Radius.circular(15)),
+                              child: Container(
+                                color: selectorConfig.colorSelectorBox??  Theme.of(context).canvasColor,
+                                child: CountrySearchListWidget(
+                                  countries,
+                                  locale,
+                                  searchBoxDecoration: searchBoxDecoration,
+                                  showFlags: selectorConfig.showFlags,
+                                  useEmoji: selectorConfig.useEmoji,
+                                  autoFocus: autoFocusSearchField,
+                                    helperTextSearchBox: helperTextSearchBox
+                                ),
+                              )))
+                    ],
+                  )));
+        });
+
+    //
+    //
+    //   showModalBottomSheet(
+    //   context: inheritedContext,
+    //   clipBehavior: Clip.hardEdge,
+    //   isScrollControlled: isScrollControlled,
+    //   backgroundColor: Colors.transparent,
+    //   shape: RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.only(
+    //           topLeft: Radius.circular(12), topRight: Radius.circular(12))),
+    //   builder: (BuildContext context) {
+    //     return Stack(children: [
+    //       GestureDetector(
+    //         onTap: () => Navigator.pop(context),
+    //       ),
+    //       Padding(
+    //         padding: EdgeInsets.only(
+    //             bottom: MediaQuery.of(context).viewInsets.bottom),
+    //         child: DraggableScrollableSheet(
+    //           builder: (BuildContext context, ScrollController controller) {
+    //             return Directionality(
+    //               textDirection: Directionality.of(inheritedContext),
+    //               child: Container(
+    //                 decoration: ShapeDecoration(
+    //                   color: Theme.of(context).canvasColor,
+    //                   shape: RoundedRectangleBorder(
+    //                     borderRadius: BorderRadius.only(
+    //                       topLeft: Radius.circular(12),
+    //                       topRight: Radius.circular(12),
+    //                     ),
+    //                   ),
+    //                 ),
+    //                 child: CountrySearchListWidget(
+    //                   countries,
+    //                   locale,
+    //                   searchBoxDecoration: searchBoxDecoration,
+    //                   scrollController: controller,
+    //                   showFlags: selectorConfig.showFlags,
+    //                   useEmoji: selectorConfig.useEmoji,
+    //                   autoFocus: autoFocusSearchField,
+    //                 ),
+    //               ),
+    //             );
+    //           },
+    //         ),
+    //       ),
+    //     ]);
+    //   },
+    // );
   }
 }

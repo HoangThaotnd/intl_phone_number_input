@@ -12,6 +12,7 @@ class CountrySearchListWidget extends StatefulWidget {
   final bool autoFocus;
   final bool? showFlags;
   final bool? useEmoji;
+  final String? helperTextSearchBox;
 
   CountrySearchListWidget(
     this.countries,
@@ -20,7 +21,7 @@ class CountrySearchListWidget extends StatefulWidget {
     this.scrollController,
     this.showFlags,
     this.useEmoji,
-    this.autoFocus = false,
+    this.autoFocus = false,this.helperTextSearchBox
   });
 
   @override
@@ -52,7 +53,7 @@ class _CountrySearchListWidgetState extends State<CountrySearchListWidget> {
   /// Returns [InputDecoration] of the search box
   InputDecoration getSearchBoxDecoration() {
     return widget.searchBoxDecoration ??
-        InputDecoration(labelText: 'Search by country name or dial code');
+        InputDecoration(labelText: widget.helperTextSearchBox ?? 'Search by country name or dial code');
   }
 
   @override
