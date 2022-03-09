@@ -89,6 +89,7 @@ class InternationalPhoneNumberInput extends StatefulWidget {
 
   final List<String>? countries;
   final String? helperTextSearchBox;
+  final String? titleHeaderSelectorBox;
 
   InternationalPhoneNumberInput(
       {Key? key,
@@ -126,7 +127,7 @@ class InternationalPhoneNumberInput extends StatefulWidget {
       this.textAlignVertical = TextAlignVertical.center,
       this.scrollPadding = const EdgeInsets.all(20.0),
       this.focusNode,
-      this.cursorColor,
+      this.cursorColor,this.titleHeaderSelectorBox,
       this.autofillHints,this.countryBoxDecoration,this.paddingCountryBox,this.helperTextSearchBox,
       this.countries})
       : super(key: key);
@@ -388,7 +389,8 @@ class _InputWidgetView extends WidgetView<InternationalPhoneNumberInput, _InputW
                     isEnabled: widget.isEnabled,
                     autoFocusSearchField: widget.autoFocusSearch,
                     isScrollControlled: widget.countrySelectorScrollControlled,
-                        helperTextSearchBox: widget.helperTextSearchBox
+                        helperTextSearchBox: widget.helperTextSearchBox,
+                      titleHeaderSelectorBox: widget.titleHeaderSelectorBox,
                   )),
                   SizedBox(
                     height: state.selectorButtonBottomPadding,

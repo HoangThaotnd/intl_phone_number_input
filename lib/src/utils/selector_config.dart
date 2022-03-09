@@ -37,6 +37,11 @@ class SelectorConfig {
 
   final Color? colorLineInTopSelectorBox;
 
+  final String? titleHeaderSelectorBox;
+  final TextStyle? titleHeaderModalTextStyle;
+
+  final EdgeInsetsGeometry? bodyPadding;
+
   const SelectorConfig({
     this.selectorType = PhoneInputSelectorType.DROPDOWN,
     this.showFlags = true,
@@ -44,6 +49,6 @@ class SelectorConfig {
     this.countryComparator,
     this.setSelectorButtonAsPrefixIcon = false,
     this.leadingPadding,
-    this.trailingSpace = true,this.colorSelectorBox, this.colorLineInTopSelectorBox
+    this.trailingSpace = true,this.colorSelectorBox, this.colorLineInTopSelectorBox, this.titleHeaderModalTextStyle, this.bodyPadding, this.titleHeaderSelectorBox
   });
 }

@@ -13,6 +13,9 @@ class CountrySearchListWidget extends StatefulWidget {
   final bool? showFlags;
   final bool? useEmoji;
   final String? helperTextSearchBox;
+  final String? titleHeaderSelectorBox;
+
+  final EdgeInsetsGeometry? padding;
 
   CountrySearchListWidget(
     this.countries,
@@ -21,7 +24,7 @@ class CountrySearchListWidget extends StatefulWidget {
     this.scrollController,
     this.showFlags,
     this.useEmoji,
-    this.autoFocus = false,this.helperTextSearchBox
+    this.autoFocus = false,this.helperTextSearchBox, this.titleHeaderSelectorBox, this.padding,
   });
 
   @override
@@ -62,7 +65,7 @@ class _CountrySearchListWidgetState extends State<CountrySearchListWidget> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
           child: TextFormField(
             key: Key(TestHelper.CountrySearchInputKeyValue),
             decoration: getSearchBoxDecoration(),

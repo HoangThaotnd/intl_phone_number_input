@@ -8,6 +8,8 @@ import 'package:intl_phone_number_input/src/widgets/countries_search_list_widget
 import 'package:intl_phone_number_input/src/widgets/input_widget.dart';
 import 'package:intl_phone_number_input/src/widgets/item.dart';
 
+import 'header_bottom_sheet.dart';
+
 /// [SelectorButton]
 class SelectorButton extends StatelessWidget {
   final List<Country> countries;
@@ -21,6 +23,7 @@ class SelectorButton extends StatelessWidget {
   final bool isScrollControlled;
 
   final String? helperTextSearchBox;
+  final String? titleHeaderSelectorBox;
 
   final ValueChanged<Country?> onCountryChanged;
 
@@ -35,7 +38,9 @@ class SelectorButton extends StatelessWidget {
     required this.locale,
     required this.onCountryChanged,
     required this.isEnabled,
-    required this.isScrollControlled,this.helperTextSearchBox,
+    required this.isScrollControlled,
+    this.helperTextSearchBox,
+    this.titleHeaderSelectorBox,
   }) : super(key: key);
 
   @override
@@ -163,7 +168,7 @@ class SelectorButton extends StatelessWidget {
                   textDirection: Directionality.of(inheritedContext),
                   child: Container(
                     decoration: ShapeDecoration(
-                      color: selectorConfig.colorSelectorBox?? Theme.of(context).canvasColor,
+                      color: selectorConfig.colorSelectorBox ?? Theme.of(context).canvasColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(12),
@@ -210,7 +215,7 @@ class SelectorButton extends StatelessWidget {
                         height: 4,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.only(topRight: Radius.circular(15), topLeft: Radius.circular(15)),
-                          color: selectorConfig.colorLineInTopSelectorBox?? Colors.transparent,
+                          color: selectorConfig.colorLineInTopSelectorBox ?? Colors.transparent,
                         ),
                         margin: EdgeInsets.only(bottom: 6),
                       ),
@@ -218,15 +223,22 @@ class SelectorButton extends StatelessWidget {
                           child: ClipRRect(
                               borderRadius: BorderRadius.only(topRight: Radius.circular(15), topLeft: Radius.circular(15)),
                               child: Container(
-                                color: selectorConfig.colorSelectorBox??  Theme.of(context).canvasColor,
-                                child: CountrySearchListWidget(
-                                  countries,
-                                  locale,
-                                  searchBoxDecoration: searchBoxDecoration,
-                                  showFlags: selectorConfig.showFlags,
-                                  useEmoji: selectorConfig.useEmoji,
-                                  autoFocus: autoFocusSearchField,
-                                    helperTextSearchBox: helperTextSearchBox
+                                color: selectorConfig.colorSelectorBox ?? Theme.of(context).canvasColor,
+                                child: Column(
+                                  children: [
+                                    HeaderBottomSheet(
+                                      title: selectorConfig.titleHeaderSelectorBox,
+                                      titleHeaderModalTextStyle: selectorConfig.titleHeaderModalTextStyle,
+                                    ),
+                                    Expanded(
+                                        child: CountrySearchListWidget(countries, locale,
+                                            searchBoxDecoration: searchBoxDecoration,
+                                            showFlags: selectorConfig.showFlags,
+                                            useEmoji: selectorConfig.useEmoji,
+                                            autoFocus: autoFocusSearchField,
+                                            padding: selectorConfig.bodyPadding,
+                                            helperTextSearchBox: helperTextSearchBox))
+                                  ],
                                 ),
                               )))
                     ],
